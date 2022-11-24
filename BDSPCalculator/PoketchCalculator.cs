@@ -228,13 +228,13 @@ public class PoketchCalculator {
             if (dotIndex > 0) {
                 integerPart = integerPart.Substring(0, dotIndex);
                 integerLength = integerPart.Length;
-                if (integerLength < 8) { //123.
+                if (integerLength < 8) { 
                     var decimalLength = dispNumString.Length;
                     if (decimalLength > 9) {
                         decimalLength = 10;
                     }
 
-                    decimalLength += ~integerPart.Length;
+                    decimalLength += ~integerLength;
 
                     if (decimalLength > 7) {
                         decimalLength = 8;
@@ -257,7 +257,7 @@ public class PoketchCalculator {
             if (decimalPart.Length > 0) {
                 UInt64 parsedDecimal;
                 
-                success = UInt64.TryParse(decimalPart,NumberStyles.Number, locale, out parsedDecimal);
+                success = UInt64.TryParse(decimalPart,NumberStyles.Integer, locale, out parsedDecimal);
 
                 if (!success) {
                     return;
