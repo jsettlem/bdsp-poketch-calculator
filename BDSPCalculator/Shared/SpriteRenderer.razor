@@ -1,0 +1,39 @@
+﻿<div class="sprite-box">
+    <span class="sprite-box-text">
+        @if (sprite.enabled) {
+                @getSpriteString()
+            } 
+    </span>
+</div>
+
+@code {
+
+    [Parameter]
+    public Sprite sprite { get; set; }
+
+    public string getSpriteString() {
+        return sprite.sprite switch {
+            PoketchCalculator.CalcCode.Num_0 => "0",
+            PoketchCalculator.CalcCode.Num_1 => "1",
+            PoketchCalculator.CalcCode.Num_2 => "2",
+            PoketchCalculator.CalcCode.Num_3 => "3",
+            PoketchCalculator.CalcCode.Num_4 => "4",
+            PoketchCalculator.CalcCode.Num_5 => "5",
+            PoketchCalculator.CalcCode.Num_6 => "6",
+            PoketchCalculator.CalcCode.Num_7 => "7",
+            PoketchCalculator.CalcCode.Num_8 => "8",
+            PoketchCalculator.CalcCode.Num_9 => "9",
+            PoketchCalculator.CalcCode.Num_Point => ".",
+            PoketchCalculator.CalcCode.Act_Plus => "+",
+            PoketchCalculator.CalcCode.Act_Minus => "−",
+            PoketchCalculator.CalcCode.Act_Mul => "×",
+            PoketchCalculator.CalcCode.Act_Div => "÷",
+            PoketchCalculator.CalcCode.Act_Equrl => "=",
+            PoketchCalculator.CalcCode.Act_Clear => "C",
+            PoketchCalculator.CalcCode.Symbol_Asterisk => "*",
+            PoketchCalculator.CalcCode.Symbol_Question => "?",
+            _ => ""
+            };
+    }
+
+}

@@ -1,0 +1,187 @@
+﻿@page "/"
+@using System.Globalization
+
+<PageTitle>Pokétch Calculator</PageTitle>
+
+<h1>Pokétch Calculator</h1>
+
+<span class="locale-prompt">
+    Choose a locale:
+
+    <select name="locale" @bind="currentLocale">
+        @foreach (var locale in localeOptions) {
+            <option value="@locale.Name">@(locale.DisplayName) @(1.23.ToString(locale).Contains(',') ? "(comma)" : "(period)")</option>
+        }
+    </select>
+</span>
+
+<div class="calculator">
+    <div class="calculator-display">
+        <SpriteRenderer sprite="calculator.symbol"></SpriteRenderer>
+
+        @foreach (var digit in calculator.numImage.Reverse()) {
+            <SpriteRenderer sprite="digit"></SpriteRenderer>
+        }
+    </div>
+
+
+    <div class="calculator-panel" style="--bs-columns: 5">
+        <button class="btn btn-primary" @onclick="() => calculator.InputNumeric(PoketchCalculator.CalcCode.Num_7)">7</button>
+        <button class="btn btn-primary" @onclick="() => calculator.InputNumeric(PoketchCalculator.CalcCode.Num_8)">8</button>
+        <button class="btn btn-primary" @onclick="() => calculator.InputNumeric(PoketchCalculator.CalcCode.Num_9)">9</button>
+        <button class="btn btn-primary wide" @onclick="calculator.InputClear">Clear</button>
+
+        <button class="btn btn-primary" @onclick="() => calculator.InputNumeric(PoketchCalculator.CalcCode.Num_4)">4</button>
+        <button class="btn btn-primary" @onclick="() => calculator.InputNumeric(PoketchCalculator.CalcCode.Num_5)">5</button>
+        <button class="btn btn-primary" @onclick="() => calculator.InputNumeric(PoketchCalculator.CalcCode.Num_6)">6</button>
+        <button class="btn btn-primary" @onclick="() => calculator.InputAction(PoketchCalculator.CalcCode.Act_Plus)">+</button>
+        <button class="btn btn-primary" @onclick="() => calculator.InputAction(PoketchCalculator.CalcCode.Act_Minus)">−</button>
+
+        <button class="btn btn-primary" @onclick="() => calculator.InputNumeric(PoketchCalculator.CalcCode.Num_1)">1</button>
+        <button class="btn btn-primary" @onclick="() => calculator.InputNumeric(PoketchCalculator.CalcCode.Num_2)">2</button>
+        <button class="btn btn-primary" @onclick="() => calculator.InputNumeric(PoketchCalculator.CalcCode.Num_3)">3</button>
+        <button class="btn btn-primary" @onclick="() => calculator.InputAction(PoketchCalculator.CalcCode.Act_Mul)">×</button>
+        <button class="btn btn-primary" @onclick="() => calculator.InputAction(PoketchCalculator.CalcCode.Act_Div)">÷</button>
+
+
+        <button class="btn btn-primary wide" @onclick="() => calculator.InputNumeric(PoketchCalculator.CalcCode.Num_0)">0</button>
+        <button class="btn btn-primary" @onclick="calculator.InputDigitPoint">.</button>
+        <button class="btn btn-primary wide" @onclick="calculator.InputEqual">=</button>
+    </div>
+</div>
+
+<h2>Debug information</h2>
+
+<div class="debug-info">
+    <div class="debug-panel">
+        <h3>Calculator state</h3>
+        <table>
+            <tr>
+                <th>Property</th>
+                <th>Value</th>
+            </tr>
+            <tr>
+                <td>
+                    <pre>_dispNumString</pre>
+                </td>
+                <td>@calculator.dispNumString</td>
+            </tr>
+            <tr>
+                <td>
+                    <pre>_currentNum</pre>
+                </td>
+                <td>@calculator.currentNum</td>
+            </tr>
+            <tr>
+                <td>
+                    <pre>_calcMode</pre>
+                </td>
+                <td>@calculator.calcMode</td>
+            </tr>
+            <tr>
+                <td>
+                    <pre>dotIndex</pre>
+                </td>
+                <td>@calculator.dotIndex</td>
+            </tr>
+            <tr>
+                <td>
+                    <pre>integerPart</pre>
+                </td>
+                <td>@calculator.integerPart</td>
+            </tr>
+            <tr>
+                <td>
+                    <pre>decimalPart</pre>
+                </td>
+                <td>@calculator.decimalPart</td>
+            </tr>
+            <tr>
+                <td>
+                    <pre>parsedNumber</pre>
+                </td>
+                <td>@calculator.parsedNumber</td>
+            </tr>
+            <tr>
+                <td>
+                    <pre>isNegative</pre>
+                </td>
+                <td>@calculator.isNegative</td>
+            </tr>
+            <tr>
+                <td>
+                    <pre>locale</pre>
+                </td>
+                <td>@calculator.locale</td>
+            </tr>
+        </table>
+    </div>
+    <div class="debug-panel">
+        <h3>Display state</h3>
+        <table>
+            <tr>
+                <th>Index</th>
+                <th>Code</th>
+                <th>Enabled?</th>
+            </tr>
+            <tr>
+                <td>
+                    Symbol
+                </td>
+                <td>
+                    @calculator.symbol.sprite
+                </td>
+                <td>
+                    @calculator.symbol.enabled
+                </td>
+            </tr>
+
+            @for (var i = calculator.numImage.Length - 1; i >= 0; i--) {
+                <tr>
+                    <td>
+                        @i
+                    </td>
+                    <td>
+                        @calculator.numImage[i].sprite
+                    </td>
+                    <td>
+                        @calculator.numImage[i].enabled
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>
+
+
+@code {
+    private readonly PoketchCalculator calculator = new();
+
+    private string currentLocale {
+        get => _currentLocale;
+        set {
+            _currentLocale = value;
+            calculator.locale = CultureInfo.CreateSpecificCulture(value);
+        }
+    }
+
+    private CultureInfo[] localeOptions = {
+        CultureInfo.CurrentCulture,
+        CultureInfo.CreateSpecificCulture("en-US"),
+        CultureInfo.CreateSpecificCulture("en-GB"),
+        CultureInfo.CreateSpecificCulture("jp-JP"),
+        CultureInfo.CreateSpecificCulture("de-DE"),
+        CultureInfo.CreateSpecificCulture("fr-FR"),
+        CultureInfo.CreateSpecificCulture("es-ES"),
+        CultureInfo.CreateSpecificCulture("it-IT"),
+        CultureInfo.CreateSpecificCulture("nl-NL"),
+        CultureInfo.CreateSpecificCulture("pt-BR"),
+        CultureInfo.CreateSpecificCulture("ru-RU"),
+        CultureInfo.CreateSpecificCulture("zh-CN"),
+        CultureInfo.CreateSpecificCulture("zh-TW"),
+        CultureInfo.CreateSpecificCulture("ko-KR"),
+    };
+
+    private string _currentLocale = CultureInfo.CurrentCulture.Name;
+
+}
