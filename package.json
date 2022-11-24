@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "gh-pages": "^4.0.0"
+  },
+  "scripts": {
+    "publish": "dotnet publish -c Release & gh-pages -d BDSPCalculator/bin/Release/net6.0/publish/wwwroot -f" 
+  }
+}

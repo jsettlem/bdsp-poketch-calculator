@@ -78,6 +78,7 @@ button {
     height: 3em;
     margin-bottom: 1em;
     border-radius: 0.2em;
+    box-shadow: 0 0 10px lightgreen;
 }
 
 .sprite-box {

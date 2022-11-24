@@ -74,14 +74,13 @@ public class PoketchCalculator {
 
         if (dispNumString.Equals("0")) {
             dispNumString = String.Empty;
+            
+            foreach (var n in numImage) {
+                n.enabled = false;
+            }
         }
 
-        foreach (var n in numImage) {
-            n.enabled = false;
-        }
-
-        var newDispNum = dispNumString;
-        if (newDispNum.Length < 10) {
+        if (dispNumString.Length < 10) {
             var newNum_str = String.Format("{0}", (int) num);
             dispNumString = String.Concat(dispNumString, newNum_str);
         }
@@ -135,9 +134,8 @@ public class PoketchCalculator {
             decimal newDecimal;
             if (decimal.TryParse(dispNumString, NumberStyles.Number, locale, out newDecimal)) {
                 currentNum = newDecimal;
+                dispNumString = "0";
             }
-
-            dispNumString = "0";
         }
 
         joined:
