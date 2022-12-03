@@ -5,30 +5,25 @@ namespace BDSPCalculator;
 
 public class PoketchCalculator {
     public CultureInfo locale = CultureInfo.CurrentCulture;
-    public const int maxDigit = 10;
     public const string defaultDisp = "0";
+    public const int maxDigit = 10;
+    
     public Sprite[] numImage = {
-        new(),
-        new(),
-        new(),
-        new(),
-        new(),
-        new(),
-        new(),
-        new(),
-        new(),
-        new()
+        new(), new(), new(), new(),
+        new(), new(), new(), new(),
+        new(), new()
     };
-    public Sprite symbol  = new();
+
     public string dispNumString = "";
+    public Sprite symbol  = new();
     public Decimal currentNum;
     
-    public CalcCode calcMode;
-    public int dotIndex;
+    public decimal parsedNumber;
     public string integerPart;
     public string decimalPart;
-    public decimal parsedNumber;
+    public CalcCode calcMode;
     public bool isNegative;
+    public int dotIndex;
 
     public enum CalcCode
     {
@@ -87,10 +82,8 @@ public class PoketchCalculator {
         
         UpdateNumberImage();
 
-        if (calcMode == CalcCode.CalcCode_Null || calcMode == CalcCode.Act_Clear) {
-            symbol.enabled = false;
-        }
-        else {
+        symbol.enabled = false;
+        if (calcMode != CalcCode.CalcCode_Null && calcMode != CalcCode.Act_Clear) {
             symbol.enabled = true;
             symbol.sprite = calcMode;
         }
@@ -139,10 +132,8 @@ public class PoketchCalculator {
         }
 
         joined:
-        if (calcMode == CalcCode.CalcCode_Null || calcMode == CalcCode.Act_Clear) {
-            symbol.enabled = false;
-        }
-        else {
+        symbol.enabled = false;
+        if (calcMode != CalcCode.CalcCode_Null && calcMode != CalcCode.Act_Clear) {
             symbol.enabled = true;
             symbol.sprite = action;
         }
@@ -167,23 +158,18 @@ public class PoketchCalculator {
                 currentNum *= parsedNum;
                 break;
             case CalcCode.Act_Div:
-                if (parsedNum == 0) {
-                    break;
-                }
+                if (parsedNum == 0) break;
 
                 currentNum /= parsedNum;
                 break;
         }
 
-
         dispNumString = currentNum.ToString(locale);
         
         UpdateNumberImage();
 
-        if (calcMode == CalcCode.CalcCode_Null || calcMode == CalcCode.Act_Clear) {
-            symbol.enabled = false;
-        }
-        else {
+        symbol.enabled = false;
+        if (calcMode != CalcCode.CalcCode_Null && calcMode != CalcCode.Act_Clear) {
             symbol.enabled = true;
             symbol.sprite = calcMode;
         }
@@ -205,18 +191,13 @@ public class PoketchCalculator {
     private void UpdateNumberImage() {
         if (!string.IsNullOrEmpty(dispNumString)) {
             var success = decimal.TryParse(dispNumString, NumberStyles.Number, locale, out parsedNumber);
-            if (!success) {
-                return; 
-            }
+            if (!success) return; 
 
-
+            isNegative = false;
             if (parsedNumber < decimal.Zero) {
                 isNegative = true;
                 parsedNumber = -parsedNumber;
                 dispNumString = dispNumString.Replace("-", "");
-            }
-            else {
-                isNegative = false;
             }
 
             dotIndex = dispNumString.IndexOf(".");
@@ -230,6 +211,7 @@ public class PoketchCalculator {
                 integerLength = integerPart.Length;
                 if (integerLength < 8) { 
                     var decimalLength = dispNumString.Length;
+                    
                     if (decimalLength > 9) {
                         decimalLength = 10;
                     }
@@ -246,9 +228,7 @@ public class PoketchCalculator {
                 }
             }
 
-            if (integerPart.Length > 10) {
-                return;
-            }
+            if (integerPart.Length > 10) return;
             
             foreach (var n in numImage) {
                 n.enabled = false;
@@ -258,10 +238,7 @@ public class PoketchCalculator {
                 UInt64 parsedDecimal;
                 
                 success = UInt64.TryParse(decimalPart,NumberStyles.Integer, locale, out parsedDecimal);
-
-                if (!success) {
-                    return;
-                }
+                if (!success) return;
 
                 SetNumImage(parsedDecimal, decimalPart.Length,  0);
             }
@@ -292,29 +269,30 @@ public class PoketchCalculator {
     }
 
     private void SetNumImage(UInt64 num, int digit, int dispIndex) {
-        if (digit > 0) {
-            var place = 0;
-            do {
-                UInt64 powTen = (ulong)Math.Pow(10, place);
-                var placeIndex = dispIndex + place;
-                numImage[placeIndex].enabled = true;
-                var next_pow_ten = powTen * 10;
-                UInt64 new_number = 0;
-                if (next_pow_ten != 0) {
-                    new_number = (num / next_pow_ten);
-                }
+        if (digit <= 0) return;
 
-                UInt64 remainder = 0;
-                if (powTen != 0) {
-                    remainder = (num - new_number * next_pow_ten) / powTen;
-                }
+        var place = 0;
+        do {
+            UInt64 new_number = 0;
+            UInt64 powTen = (ulong)Math.Pow(10, place);
+            
+            var placeIndex = dispIndex + place;
+            var next_pow_ten = powTen * 10;
+            
+            if (next_pow_ten != 0) {
+                new_number = (num / next_pow_ten);
+            }
 
-                numImage[placeIndex].sprite = (CalcCode)remainder;
+            UInt64 remainder = 0;
+            if (powTen != 0) {
+                remainder = (num - new_number * next_pow_ten) / powTen;
+            }
 
-                place += 1;
+            numImage[placeIndex].enabled = true;
+            numImage[placeIndex].sprite = (CalcCode)remainder;
 
-            } while (place != digit);
-        }
+            place += 1;
+        } while (place != digit);
     }
 
     public PoketchCalculator() {
